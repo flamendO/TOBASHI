@@ -1,0 +1,11 @@
+Guest
+192.168.0.5
+oUpECuWPwL
+C:\Users\greg4\AppData\Local\Temp
+C:\Users\greg4\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
+X.X.X.X
+2583
+remote
+
+
+# FILE EXAMPLE OF A REMOTE CONFIG FILE OF THE USER doe

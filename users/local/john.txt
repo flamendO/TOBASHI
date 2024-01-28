@@ -1,0 +1,7 @@
+Guest
+192.168.0.5
+oUghflmDbp
+
+
+
+# FILE EXAMPLE OF A LOCAL CONFIG FILE OF THE USER john
