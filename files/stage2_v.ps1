@@ -37,7 +37,7 @@ function PklIyfgtrfjd {
 }
 
 # Création de l'administrateur local
-$name = "Guest"
+$name = Get-RandomAlphanumericString
 $password = Get-RandomAlphanumericString
 
 # Supprimer l'utilisateur seulement s'il existe

