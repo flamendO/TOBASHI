@@ -126,4 +126,10 @@ If you are english, change **"Administrateurs"** by **"Administrators"**.
 
 
 
+FOR VPS, INSTALL : 
+
+sshpass
+git
+apache2
+openssh-server
 

