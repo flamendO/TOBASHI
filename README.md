@@ -133,3 +133,7 @@ git
 apache2
 openssh-server
 
+Careful : 
+
+vps_settings folder and vps_conf have to be created before (void by default)
+
