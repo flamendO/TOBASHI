@@ -63,6 +63,7 @@ echo "
     echo "               "
     echo "      [user]...............Choose a user"
     echo "      [console]........Start the console"
+    echo "      [check]..Checking users connection"  
     echo "      [discord].....Setting your discord"
     echo "      [vps]...............Setting-up VPS"
     echo "      [download]....Download from target"
@@ -877,6 +878,49 @@ grabber_menu(){
 
 
 
+### checking user menu ---------------
+
+check_users() {
+    clear
+    echo ""
+    echo -e "${red}"
+    echo "_______________________*~CONNECTION TABLE~*_______________________"
+    echo ""
+
+    echo -e "${reset}"
+    echo -e "${gras}"
+    local user_dir="./users/vps/"
+    local user_files=$(ls $user_dir)
+
+    for user_file in $user_files; do
+        local file_path="${user_dir}${user_file}"
+        local display_name=$(basename "$user_file" .txt)
+        
+        # Nettoyer les variables pour supprimer les caractères indésirables
+        local username=$(sed -n '1p' $file_path | tr -d '\r' | tr -d '\n')
+        local ip=$(sed -n '6p' $file_path | tr -d '\r' | tr -d '\n')
+        local port=$(sed -n '7p' $file_path | tr -d '\r' | tr -d '\n')
+        echo "----------------------------------------"
+        # Utiliser nc pour tester la connexion
+        echo -e "Testing ${display_name} @ ${ip}:${port}..."
+        nc -z -w 3 $ip $port
+        if [ $? -eq 0 ]; then
+            echo -e "${display_name} @ ${ip}:${port} - \e[32mConnected\e[0m"
+        else
+            echo -e "${display_name} @ ${ip}:${port} - \e[31mNot Connected\e[0m"
+        fi
+        echo "----------------------------------------"
+        echo ""
+    done
+    echo ""
+    echo ""
+    read -p "Click Enter to go back to Menu.........."
+    clear
+}
+
+
+### checking user menu ---------------
+
 
 
 
@@ -904,6 +948,11 @@ do
     console)
 
         console_menu
+        ;;
+
+    check)
+
+        check_users
         ;;
 
     discord)
