@@ -1,9 +1,13 @@
 # TOBASHI 戸橋
 TOBASHI is a RAT (Remove Access Tool) including payloads and control panel. [IN DEVELOPMENT]
+![hackerman-ezgif com-webp-to-gif-converter](https://github.com/flamendO/TOBASHI-/assets/78015005/47cef9a5-cf8e-478f-bb65-81cdf8335d1a)
 
 ## Information
 
 This tool is for educational purpose only, the usage of TOBASHI without mutual consent is illegal. Developers assume no liability and are not responsible for any misuse or damage cause by this program.
+
+![tobashi](https://github.com/flamendO/TOBASHI-/assets/78015005/4c0eae4a-914e-42fa-8b1f-9db03f835160)
+
 
 ## Features
 
@@ -17,6 +21,7 @@ This tool is for educational purpose only, the usage of TOBASHI without mutual c
 
 - Obfuscator
 - Keylogger
+- Grabber
 
 ## Configuration file
 
@@ -37,13 +42,13 @@ local         # Type of connection
 
 *Here is the doe remote configuration file :*
 ```shell
-Guest           # Name of the new user on the target machine (Guest by default)
+ZUrEwuWsjM           # Name of the new user on the target machine (Guest by default)
 192.168.0.5     # Local IP adress of the target machine
 oUpECuWPwL      # Random password generated for the connection
 C:\Users\doe\AppData\Local\Temp   # Temp path
 C:\Users\doe\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\[startup].cmd    # Startup path
 X.X.X.X        # VPS IP adress
-2583           # Remote Port (By default)
+64215           # Remote Port 
 remote         # Type of connection
 ```
 
@@ -63,6 +68,12 @@ python requirements.py
 
 ```shell
 ./tobashi.sh
+```
+
+• **On your VPS**
+
+```shell
+sudo apt install sshpass git apache2 openssh-server
 ```
 
 # Discord configuration
@@ -122,16 +133,6 @@ Add-LocalGroupMember -Group "Administrateurs" -Member $JhfuihdfOm
 
 If you are english, change **"Administrateurs"** by **"Administrators"**.
 
-
-
-
-
-FOR VPS, INSTALL : 
-
-sshpass
-git
-apache2
-openssh-server
 
 Careful : 
 
