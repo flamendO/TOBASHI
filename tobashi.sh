@@ -536,9 +536,14 @@ discord_menu(){
     echo ""
     echo "The purpose of this menu is to set your discord webhook in order"
     echo "to receive remote informations on every users. To do so, just"
-    echo "enter the link of your discord Webhook in the file discord_config/discord.txt then:"
+    echo "enter the link of your discord Webhook :"
     echo ""
     echo -e "${cyan}"
+
+    read -p "[+] Please Paste your discord Webhook : " discord_webhook
+    sed -i "2s|.*|$discord_webhook|" ./discord_config/discord.txt
+
+
     read -p "Click Enter when it's done......" dummy
     echo -e "${reset}"
     echo -e "${gras}"
@@ -867,7 +872,8 @@ help_menu(){
 grabber_menu(){
 
     clear
-    echo "test"
+    echo "IN DEVELOPMENT..."
+    echo ""
     read -p "Enter...." dummy
 
 
